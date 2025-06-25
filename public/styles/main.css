@@ -251,6 +251,60 @@ body {
   }
 }
 
+/* Messages d'erreur et de succès */
+.message-container {
+  margin-bottom: var(--spacing-md);
+}
+
+.message {
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  display: none;
+}
+
+.message.show {
+  display: block;
+  animation: slideIn 0.3s ease-out;
+}
+
+.message-error {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+}
+
+.message-success {
+  background-color: #efe;
+  border: 1px solid #cfc;
+  color: #363;
+}
+
+.error-message {
+  color: var(--orange-accent);
+  font-size: 14px;
+  margin-top: var(--spacing-xs);
+  min-height: 20px;
+  font-weight: 500;
+}
+
+.form-group input.error {
+  border-color: var(--orange-accent);
+  box-shadow: 0 0 0 3px rgba(242, 66, 54, 0.3);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (min-width: 768px) {
   .main-content {
     padding: var(--spacing-md);

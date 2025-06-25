@@ -34,18 +34,29 @@
               Ce questionnaire nous permettra de mieux vous connaître.
             </p>
 
+            <!-- Zone de messages -->
+            <div class="message-container" id="message-container"></div>
+
             <form class="candidat-form" id="form-candidat">
               <div class="form-group">
-                <label for="nom">Nom Complet *</label>
-                <input type="text" id="nom" name="nom" required />
+                <label for="nom">Nom et Prénom *</label>
+                <input
+                  type="text"
+                  id="nom"
+                  name="nom"
+                  placeholder="Ex: Dupont Marie"
+                />
+                <div class="error-message" id="error-nom"></div>
               </div>
               <div class="form-group">
                 <label for="email">Email *</label>
-                <input type="email" id="email" name="email" required />
+                <input type="text" id="email" name="email" />
+                <div class="error-message" id="error-email"></div>
               </div>
               <div class="form-group">
                 <label for="telephone">Téléphone</label>
                 <input type="tel" id="telephone" name="telephone" />
+                <div class="error-message" id="error-telephone"></div>
               </div>
               <button type="submit" class="btn-commencer">
                 Commencer le questionnaire
@@ -57,8 +68,48 @@
         <!-- Section questionnaire (cachée) -->
         <section class="page-section hidden" id="page-questionnaire">
           <div class="question-card">
-            <h2>Questions à venir...</h2>
-            <p>Les questions seront ajoutées ici une fois reçues du RH</p>
+            <div class="question-header">
+              <h2 id="question-titre">Question 1 sur 5</h2>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+            </div>
+
+            <div class="question-content" id="question-content">
+              <!-- Les questions seront injectées ici par JavaScript -->
+            </div>
+
+            <div class="question-navigation">
+              <button
+                type="button"
+                class="btn-secondary"
+                id="btn-precedent"
+                style="display: none"
+              >
+                Précédent
+              </button>
+              <button type="button" class="btn-primary" id="btn-suivant">
+                Suivant
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section récapitulatif (cachée) -->
+        <section class="page-section hidden" id="page-recapitulatif">
+          <div class="recap-card">
+            <h2>Récapitulatif de vos réponses</h2>
+            <div id="recap-content">
+              <!-- Récapitulatif généré par JavaScript -->
+            </div>
+            <div class="recap-actions">
+              <button type="button" class="btn-secondary" id="btn-modifier">
+                Modifier mes réponses
+              </button>
+              <button type="button" class="btn-primary" id="btn-envoyer">
+                Envoyer le questionnaire
+              </button>
+            </div>
           </div>
         </section>
       </main>
@@ -68,7 +119,108 @@
         <p>Contact : Maxence FENEZ - 09 73 89 42 27</p>
       </footer>
     </div>
+
+    <!-- JavaScript externe -->
     <script src="scripts/app.js"></script>
     <script src="scripts/questionnaire.js"></script>
+    <script src="scripts/pwa.js"></script>
+
+    <!-- Solution de contournement -->
+    <script>
+      console.log("🚨 SOLUTION DE CONTOURNEMENT ACTIVÉE");
+
+      // Attendre que tout soit chargé
+      setTimeout(() => {
+        console.log("🔧 Forçage de l'initialisation des boutons...");
+
+        const btnSuivant = document.getElementById("btn-suivant");
+        const btnPrecedent = document.getElementById("btn-precedent");
+
+        if (btnSuivant) {
+          // Supprimer tous les listeners existants
+          const nouveauBtnSuivant = btnSuivant.cloneNode(true);
+          btnSuivant.parentNode.replaceChild(nouveauBtnSuivant, btnSuivant);
+
+          // Ajouter notre propre listener
+          document
+            .getElementById("btn-suivant")
+            .addEventListener("click", function () {
+              console.log("🎯 BOUTON SUIVANT CLIQUÉ (contournement)!");
+
+              // Logique simple
+              if (typeof window.questionActuelle !== "undefined") {
+                // Sauvegarder la réponse actuelle
+                const questionActuelle = window.questionActuelle;
+                const question = window.questionsRH[questionActuelle];
+
+                if (question.type === "radio") {
+                  const selected = document.querySelector(
+                    `input[name="question_${question.id}"]:checked`
+                  );
+                  if (selected) {
+                    window.reponses[question.id] = selected.value;
+                    console.log("💾 Réponse sauvée:", selected.value);
+                  }
+                }
+
+                // Passer à la question suivante
+                if (window.questionActuelle < window.questionsRH.length - 1) {
+                  window.questionActuelle++;
+                  console.log(
+                    "➡️ Question suivante:",
+                    window.questionActuelle + 1
+                  );
+
+                  if (typeof window.afficherQuestion === "function") {
+                    window.afficherQuestion(window.questionActuelle);
+                  } else {
+                    console.error("❌ afficherQuestion non disponible");
+                  }
+                } else {
+                  console.log("✅ Questionnaire terminé!");
+                  if (typeof window.afficherRecapitulatif === "function") {
+                    window.afficherRecapitulatif();
+                  } else {
+                    alert("Questionnaire terminé!");
+                  }
+                }
+              } else {
+                console.error("❌ Variables globales non disponibles");
+              }
+            });
+
+          console.log("✅ Event listener de contournement ajouté!");
+        } else {
+          console.error("❌ Bouton Suivant introuvable!");
+        }
+
+        // Même chose pour le bouton précédent
+        if (btnPrecedent) {
+          const nouveauBtnPrecedent = btnPrecedent.cloneNode(true);
+          btnPrecedent.parentNode.replaceChild(
+            nouveauBtnPrecedent,
+            btnPrecedent
+          );
+
+          document
+            .getElementById("btn-precedent")
+            .addEventListener("click", function () {
+              console.log("🎯 BOUTON PRÉCÉDENT CLIQUÉ (contournement)!");
+
+              if (window.questionActuelle > 0) {
+                window.questionActuelle--;
+                console.log(
+                  "⬅️ Question précédente:",
+                  window.questionActuelle + 1
+                );
+
+                if (typeof window.afficherQuestion === "function") {
+                  window.afficherQuestion(window.questionActuelle);
+                }
+              }
+            });
+        }
+      }, 2000); // Attendre 2 secondes
+    </script>
   </body>
 </html>
